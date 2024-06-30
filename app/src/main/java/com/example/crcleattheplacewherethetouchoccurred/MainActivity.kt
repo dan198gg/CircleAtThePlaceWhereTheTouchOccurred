@@ -20,6 +20,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -33,6 +35,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.pm.ShortcutInfoCompat
 import com.example.crcleattheplacewherethetouchoccurred.ui.theme.CrcleAtThePlaceWhereTheTouchOccurredTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,30 +59,52 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun canvas1(){
-    var x1 by rememberSaveable {
+    var offset by remember {
 
-        mutableStateOf(0f)}
-    var y1 by rememberSaveable {
-
-        mutableStateOf(0f)
+        mutableStateOf(Offset(0f,0f))}
+    var color by remember {
+        mutableStateOf(Color.Yellow)
     }
+    var colorV by remember {
+        mutableStateOf(false)
+    }
+    var corScope= rememberCoroutineScope()
+//    var y1 by rememberSaveable {
+//
+//        mutableStateOf(0f)
+//    }
 
 //    var draw2=draw1(modifier = Modifier.size(200.dp).offset(
 //         x1.dp,
 //        y1.dp))
-    Log.i("R2",x1.toString())
+    Log.i("R2",offset.toString())
     Box( modifier = Modifier
-        .fillMaxSize()
-        .pointerInput(Unit) {
-            detectTapGestures(onTap = {
-                x1 = it.x
-                y1 = it.y
-                Log.i("R", x1.toString())
 
+        .pointerInput(Unit) {
+            detectTapGestures(onTap =
+            {
+                offset = it
+                Log.i("R", offset.toString())
+                colorV=true
+                color=Color.Yellow
 
             })
         }
-         )
+        .fillMaxSize()
+         ){
+
+        androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize()) {
+            drawCircle(color, 100f, center = offset)
+            if (colorV) {
+                corScope.launch {
+                    delay(200)
+                    color = Color.Transparent
+                    colorV = false
+                }
+            }
+
+
+        }
+    }
 
 }
-
