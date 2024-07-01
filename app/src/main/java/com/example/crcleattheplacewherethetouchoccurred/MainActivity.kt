@@ -12,6 +12,7 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -94,7 +95,7 @@ fun canvas1(){
                 Log.i("R", offset.toString())
                 isVisible=!isVisible
                 corScope.launch {
-                    delay(1000)
+                    delay(300)
                     isVisible=!isVisible
                 }
             })
@@ -104,7 +105,7 @@ fun canvas1(){
 
         AnimatedVisibility(
             visible = isVisible,
-            enter = fadeIn(animationSpec = tween(durationMillis = 10, easing = LinearEasing)),
+            enter = scaleIn(animationSpec = tween(1000)),
             exit = fadeOut(animationSpec = tween(durationMillis = 1000)), modifier = Modifier.fillMaxSize()){
 
         androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize()) {
