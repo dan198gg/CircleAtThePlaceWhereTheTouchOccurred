@@ -6,6 +6,12 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -57,6 +63,7 @@ class MainActivity : ComponentActivity() {
 //    }
 //}
 
+
 @Composable
 fun canvas1(){
     var offset by remember {
@@ -65,7 +72,7 @@ fun canvas1(){
     var color by remember {
         mutableStateOf(Color.Yellow)
     }
-    var colorV by remember {
+    var isVisible by remember {
         mutableStateOf(false)
     }
     var corScope= rememberCoroutineScope()
@@ -85,26 +92,28 @@ fun canvas1(){
             {
                 offset = it
                 Log.i("R", offset.toString())
-                colorV=true
-                color=Color.Yellow
-
+                isVisible=!isVisible
+                corScope.launch {
+                    delay(1000)
+                    isVisible=!isVisible
+                }
             })
         }
         .fillMaxSize()
          ){
 
+        AnimatedVisibility(
+            visible = isVisible,
+            enter = fadeIn(animationSpec = tween(durationMillis = 10, easing = LinearEasing)),
+            exit = fadeOut(animationSpec = tween(durationMillis = 1000)), modifier = Modifier.fillMaxSize()){
+
         androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize()) {
             drawCircle(color, 100f, center = offset)
-            if (colorV) {
-                corScope.launch {
-                    delay(200)
-                    color = Color.Transparent
-                    colorV = false
-                }
-            }
 
+            }
+        }
 
         }
     }
 
-}
+
